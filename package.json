@@ -1,24 +1,28 @@
 {
-  "name": "slide-aws-cdk-conference-japan",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "name": "slide-aws-cdk-conference-japan-legacy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "mdx-deck build ./deck.mdx",
+    "start": "mdx-deck ./deck.mdx",
+    "screenshot": "node screenshot.js"
   },
   "dependencies": {
-    "@code-hike/mdx": "^0.3.0-next.27",
-    "@mdx-js/react": "^2.0.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "shiki": "^0.10.1"
+    "code-surfer": "2.0.0-alpha.10"
   },
   "devDependencies": {
-    "@mdx-js/rollup": "^2.0.0",
-    "@vitejs/plugin-react": "^1.0.7",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.3.3",
+    "cpx": "^1.5.0",
+    "file-loader": "^4.1.0",
+    "lerna": "^3.22.1",
+    "mdx-code": "^1.1.3",
+    "mdx-deck": "2.x.x",
     "prettier": "^2.5.1",
-    "vite": "^2.8.0"
+    "raw-loader": "^3.1.0",
+    "typescript": "^3.9.3"
   }
 }
