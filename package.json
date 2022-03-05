@@ -6,7 +6,7 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "build": "mdx-deck build ./deck.mdx",
+    "build": "mdx-deck build ./deck.mdx && cpx public/* dist/",
     "start": "mdx-deck ./deck.mdx",
     "screenshot": "node screenshot.js"
   },
