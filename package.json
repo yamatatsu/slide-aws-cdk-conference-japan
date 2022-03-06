@@ -6,7 +6,7 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "build": "mdx-deck build ./deck.mdx && cpx public/* dist/",
+    "build": "mdx-deck build ./deck.mdx",
     "start": "mdx-deck ./deck.mdx",
     "screenshot": "node screenshot.js"
   },
@@ -16,10 +16,7 @@
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.3.3",
-    "cpx": "^1.5.0",
     "file-loader": "^4.1.0",
-    "lerna": "^3.22.1",
-    "mdx-code": "^1.1.3",
     "mdx-deck": "2.x.x",
     "prettier": "^2.5.1",
     "raw-loader": "^3.1.0",
