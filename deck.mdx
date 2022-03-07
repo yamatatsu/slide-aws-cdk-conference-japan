@@ -1,7 +1,7 @@
 import { Notes, Head, Steps } from "mdx-deck";
 import { Meta, Profile, AlignLeft, Header } from "./parts";
 import { CodeSurferLayout, vsDarkPartial } from "code-surfer";
-import "prismjs/components/prism-tsx";
+import "main.css";
 
 export const theme = vsDarkPartial;
 
@@ -39,7 +39,7 @@ export const theme = vsDarkPartial;
 1. 僕が CDK にコントリビュートしたこと
 1. ゴール
 1. CDK のコードの中
-1. コントリビュートのハマりどこ
+1. コントリビュートに向けて
 1. おわりに
 
 </AlignLeft>
@@ -60,6 +60,8 @@ export const theme = vsDarkPartial;
 - aws-iot-actions
 - aws-iotevents
 - aws-iotevents-actions
+
+TODO: 2例書く
 
 ---
 
@@ -105,42 +107,51 @@ export const theme = vsDarkPartial;
 
 ---
 
-<Header>ゴール</Header>
-
-# 🤩
-
----
-
 ## CDK のコードの中
 
 ---
 
-**aws-lambda/lib/function.ts** の中を見てみよう :eyes:
+<Header>CDK のコードの中</Header>
+
+`aws-lambda/lib/function.ts`  
+の中を見てみよう :eyes:
 
 ---
 
 <CodeSurferLayout>
 
-```ts
+```ts subtitle="このファイルにはFunctionクラスが定義されています"
 export class Function extends cdk.Resource {
 }
 ```
 
-```ts
+```ts 1[31:43] subtitle="ResourceはAWSリソースを抽象するクラスです"
 export class Function extends cdk.Resource {
-  constructor() {
-  }
 }
 ```
 
-```ts
+```ts subtitle="クラスにはconstructorが定義されています"
 export class Function extends cdk.Resource {
   constructor(scope: Construct, id: string, props: FunctionProps) {
   }
 }
 ```
 
-```ts
+```ts 2[15:65] subtitle="Constructを継承するクラスはconstructorにて必ず3つの引数をとります"
+export class Function extends cdk.Resource {
+  constructor(scope: Construct, id: string, props: FunctionProps) {
+  }
+}
+```
+
+```ts 2[52:65] subtitle="3つめにはクラスごとに独自のProps型をとります"
+export class Function extends cdk.Resource {
+  constructor(scope: Construct, id: string, props: FunctionProps) {
+  }
+}
+```
+
+```ts subtitle="ほとんどの場合、同じファイル内に定義されています"
 export interface FunctionProps {
 }
 
@@ -150,7 +161,7 @@ export class Function extends cdk.Resource {
 }
 ```
 
-```ts
+```ts subtitle="おなじみのcodeもここで定義されています"
 export interface FunctionProps {
   readonly code: Code;
 }
@@ -161,7 +172,7 @@ export class Function extends cdk.Resource {
 }
 ```
 
-```ts
+```ts subtitle="Propsの属性には必ずjsdocが書かれています"
 export interface FunctionProps {
   /**
    * The source code of your Lambda function. You can point to a file in an
@@ -177,7 +188,55 @@ export class Function extends cdk.Resource {
 }
 ```
 
-```ts
+```ts 2:6 subtitle="ちなみにjsdocがないとCIが落ちるので最近手が入ったコードは必ずjsdocがあります😅"
+export interface FunctionProps {
+  /**
+   * The source code of your Lambda function. You can point to a file in an
+   * Amazon Simple Storage Service (Amazon S3) bucket or specify your source
+   * code as inline text.
+   */
+  readonly code: Code;
+}
+
+export class Function extends cdk.Resource {
+  constructor(scope: Construct, id: string, props: FunctionProps) {
+  }
+}
+```
+
+```ts 2:6 subtitle="ときどき記載内容が間違ってたりします"
+export interface FunctionProps {
+  /**
+   * The source code of your Lambda function. You can point to a file in an
+   * Amazon Simple Storage Service (Amazon S3) bucket or specify your source
+   * code as inline text.
+   */
+  readonly code: Code;
+}
+
+export class Function extends cdk.Resource {
+  constructor(scope: Construct, id: string, props: FunctionProps) {
+  }
+}
+```
+
+```ts 2:6 subtitle="チャンスです🤩"
+export interface FunctionProps {
+  /**
+   * The source code of your Lambda function. You can point to a file in an
+   * Amazon Simple Storage Service (Amazon S3) bucket or specify your source
+   * code as inline text.
+   */
+  readonly code: Code;
+}
+
+export class Function extends cdk.Resource {
+  constructor(scope: Construct, id: string, props: FunctionProps) {
+  }
+}
+```
+
+```ts subtitle="propsはconstructorの中で使われます"
 export interface FunctionProps {
   /**
    * The source code of your Lambda function. You can point to a file in an
@@ -192,7 +251,7 @@ export class Function extends cdk.Resource {
 
     const code = props.code;
 
-    new CfnFunction(this, 'Resource', {
+    const resource = new CfnFunction(this, 'Resource', {
       code: {
         s3Bucket: code.s3Location && code.s3Location.bucketName,
         s3Key: code.s3Location && code.s3Location.objectKey,
@@ -205,7 +264,7 @@ export class Function extends cdk.Resource {
 }
 ```
 
-```ts
+```ts 15:23 subtitle="constructorの中にはCfnxxxというクラスが使われています"
 export interface FunctionProps {
   /**
    * The source code of your Lambda function. You can point to a file in an
@@ -220,7 +279,175 @@ export class Function extends cdk.Resource {
 
     const code = props.code;
 
-    new CfnFunction(this, 'Resource', {
+    const resource = new CfnFunction(this, 'Resource', {
+      code: {
+        s3Bucket: code.s3Location && code.s3Location.bucketName,
+        s3Key: code.s3Location && code.s3Location.objectKey,
+        s3ObjectVersion: code.s3Location && code.s3Location.objectVersion,
+        zipFile: code.inlineCode,
+        imageUri: code.image?.imageUri,
+      },
+    });
+  }
+}
+```
+
+```ts 15:23 subtitle="これはL1クラスと呼ばれ、CloudFormationのインターフェースをそのまま実装したクラスです"
+export interface FunctionProps {
+  /**
+   * The source code of your Lambda function. You can point to a file in an
+   * Amazon Simple Storage Service (Amazon S3) bucket or specify your source
+   * code as inline text.
+   */
+  readonly code: Code;
+}
+
+export class Function extends cdk.Resource {
+  constructor(scope: Construct, id: string, props: FunctionProps) {
+
+    const code = props.code;
+
+    const resource = new CfnFunction(this, 'Resource', {
+      code: {
+        s3Bucket: code.s3Location && code.s3Location.bucketName,
+        s3Key: code.s3Location && code.s3Location.objectKey,
+        s3ObjectVersion: code.s3Location && code.s3Location.objectVersion,
+        zipFile: code.inlineCode,
+        imageUri: code.image?.imageUri,
+      },
+    });
+  }
+}
+```
+
+```ts 15:23 subtitle="なのでCloudFormationのドキュメントを読めば使い方がわかります"
+export interface FunctionProps {
+  /**
+   * The source code of your Lambda function. You can point to a file in an
+   * Amazon Simple Storage Service (Amazon S3) bucket or specify your source
+   * code as inline text.
+   */
+  readonly code: Code;
+}
+
+export class Function extends cdk.Resource {
+  constructor(scope: Construct, id: string, props: FunctionProps) {
+
+    const code = props.code;
+
+    const resource = new CfnFunction(this, 'Resource', {
+      code: {
+        s3Bucket: code.s3Location && code.s3Location.bucketName,
+        s3Key: code.s3Location && code.s3Location.objectKey,
+        s3ObjectVersion: code.s3Location && code.s3Location.objectVersion,
+        zipFile: code.inlineCode,
+        imageUri: code.image?.imageUri,
+      },
+    });
+  }
+}
+```
+
+```ts 1:25 subtitle="これはかなり単純化したコードではありますが、基本的にはこんな感じです"
+export interface FunctionProps {
+  /**
+   * The source code of your Lambda function. You can point to a file in an
+   * Amazon Simple Storage Service (Amazon S3) bucket or specify your source
+   * code as inline text.
+   */
+  readonly code: Code;
+}
+
+export class Function extends cdk.Resource {
+  constructor(scope: Construct, id: string, props: FunctionProps) {
+
+    const code = props.code;
+
+    const resource = new CfnFunction(this, 'Resource', {
+      code: {
+        s3Bucket: code.s3Location && code.s3Location.bucketName,
+        s3Key: code.s3Location && code.s3Location.objectKey,
+        s3ObjectVersion: code.s3Location && code.s3Location.objectVersion,
+        zipFile: code.inlineCode,
+        imageUri: code.image?.imageUri,
+      },
+    });
+  }
+}
+```
+
+```ts 1:25 subtitle="入力(Props)と出力(Cfn)の仕組みが分かると、読める気がしてきませんか？"
+export interface FunctionProps {
+  /**
+   * The source code of your Lambda function. You can point to a file in an
+   * Amazon Simple Storage Service (Amazon S3) bucket or specify your source
+   * code as inline text.
+   */
+  readonly code: Code;
+}
+
+export class Function extends cdk.Resource {
+  constructor(scope: Construct, id: string, props: FunctionProps) {
+
+    const code = props.code;
+
+    const resource = new CfnFunction(this, 'Resource', {
+      code: {
+        s3Bucket: code.s3Location && code.s3Location.bucketName,
+        s3Key: code.s3Location && code.s3Location.objectKey,
+        s3ObjectVersion: code.s3Location && code.s3Location.objectVersion,
+        zipFile: code.inlineCode,
+        imageUri: code.image?.imageUri,
+      },
+    });
+  }
+}
+```
+
+```ts 1:25 subtitle="それではこのクラスにhandlerを追加する機能追加してみましょう"
+export interface FunctionProps {
+  /**
+   * The source code of your Lambda function. You can point to a file in an
+   * Amazon Simple Storage Service (Amazon S3) bucket or specify your source
+   * code as inline text.
+   */
+  readonly code: Code;
+}
+
+export class Function extends cdk.Resource {
+  constructor(scope: Construct, id: string, props: FunctionProps) {
+
+    const code = props.code;
+
+    const resource = new CfnFunction(this, 'Resource', {
+      code: {
+        s3Bucket: code.s3Location && code.s3Location.bucketName,
+        s3Key: code.s3Location && code.s3Location.objectKey,
+        s3ObjectVersion: code.s3Location && code.s3Location.objectVersion,
+        zipFile: code.inlineCode,
+        imageUri: code.image?.imageUri,
+      },
+    });
+  }
+}
+```
+
+```ts subtitle="まずはCloudFormationのドキュメントに従ってhandlerをL1クラスに渡します"
+export interface FunctionProps {
+  /**
+   * The source code of your Lambda function. You can point to a file in an
+   * Amazon Simple Storage Service (Amazon S3) bucket or specify your source
+   * code as inline text.
+   */
+  readonly code: Code;
+}
+
+export class Function extends cdk.Resource {
+  constructor(scope: Construct, id: string, props: FunctionProps) {
+
+    const code = props.code;
+
+    const resource = new CfnFunction(this, 'Resource', {
       code: {
         s3Bucket: code.s3Location && code.s3Location.bucketName,
         s3Key: code.s3Location && code.s3Location.objectKey,
@@ -234,7 +461,7 @@ export class Function extends cdk.Resource {
 }
 ```
 
-```ts
+```ts subtitle="次に、Propsにhandlerを生やしてあげます"
 export interface FunctionProps {
   /**
    * The source code of your Lambda function. You can point to a file in an
@@ -251,7 +478,7 @@ export class Function extends cdk.Resource {
 
     const code = props.code;
 
-    new CfnFunction(this, 'Resource', {
+    const resource = new CfnFunction(this, 'Resource', {
       code: {
         s3Bucket: code.s3Location && code.s3Location.bucketName,
         s3Key: code.s3Location && code.s3Location.objectKey,
@@ -265,7 +492,7 @@ export class Function extends cdk.Resource {
 }
 ```
 
-```ts
+```ts subtitle="最後に、CloudFormationのドキュメントなどを参考にjsdocを書きます"
 export interface FunctionProps {
   /**
    * The source code of your Lambda function. You can point to a file in an
@@ -278,12 +505,6 @@ export interface FunctionProps {
    * The name of the method within your code that Lambda calls to execute
    * your function. The format includes the file name. It can also include
    * namespaces and other qualifiers, depending on the runtime.
-   *
-   * Use `Handler.FROM_IMAGE` when defining a function from a Docker image.
-   *
-   * NOTE: If you specify your source code as inline text by specifying the
-   * ZipFile property within the Code property, specify index.function_name as
-   * the handler.
    */
   readonly handler: string;
 }
@@ -293,7 +514,7 @@ export class Function extends cdk.Resource {
 
     const code = props.code;
 
-    new CfnFunction(this, 'Resource', {
+    const resource = new CfnFunction(this, 'Resource', {
       code: {
         s3Bucket: code.s3Location && code.s3Location.bucketName,
         s3Key: code.s3Location && code.s3Location.objectKey,
@@ -307,7 +528,7 @@ export class Function extends cdk.Resource {
 }
 ```
 
-```ts
+```ts subtitle="あとはテストとREADMEを追記すればPRを出せます！"
 export interface FunctionProps {
   /**
    * The source code of your Lambda function. You can point to a file in an
@@ -320,12 +541,6 @@ export interface FunctionProps {
    * The name of the method within your code that Lambda calls to execute
    * your function. The format includes the file name. It can also include
    * namespaces and other qualifiers, depending on the runtime.
-   *
-   * Use `Handler.FROM_IMAGE` when defining a function from a Docker image.
-   *
-   * NOTE: If you specify your source code as inline text by specifying the
-   * ZipFile property within the Code property, specify index.function_name as
-   * the handler.
    */
   readonly handler: string;
 }
@@ -335,7 +550,7 @@ export class Function extends cdk.Resource {
 
     const code = props.code;
 
-    new CfnFunction(this, 'Resource', {
+    const resource = new CfnFunction(this, 'Resource', {
       code: {
         s3Bucket: code.s3Location && code.s3Location.bucketName,
         s3Key: code.s3Location && code.s3Location.objectKey,
@@ -343,51 +558,7 @@ export class Function extends cdk.Resource {
         zipFile: code.inlineCode,
         imageUri: code.image?.imageUri,
       },
-      handler: props.handler === Handler.FROM_IMAGE ? undefined : props.handler,
-    });
-  }
-}
-```
-
-
-```ts
-export interface FunctionProps {
-  /**
-   * The source code of your Lambda function. You can point to a file in an
-   * Amazon Simple Storage Service (Amazon S3) bucket or specify your source
-   * code as inline text.
-   */
-  readonly code: Code;
-
-  /**
-   * The name of the method within your code that Lambda calls to execute
-   * your function. The format includes the file name. It can also include
-   * namespaces and other qualifiers, depending on the runtime.
-   *
-   * Use `Handler.FROM_IMAGE` when defining a function from a Docker image.
-   *
-   * NOTE: If you specify your source code as inline text by specifying the
-   * ZipFile property within the Code property, specify index.function_name as
-   * the handler.
-   */
-  readonly handler: string;
-}
-
-export class Function extends cdk.Resource {
-  constructor(scope: Construct, id: string, props: FunctionProps) {
-
-    const code = props.code.bind(this);
-    verifyCodeConfig(code, props);
-
-    new CfnFunction(this, 'Resource', {
-      code: {
-        s3Bucket: code.s3Location && code.s3Location.bucketName,
-        s3Key: code.s3Location && code.s3Location.objectKey,
-        s3ObjectVersion: code.s3Location && code.s3Location.objectVersion,
-        zipFile: code.inlineCode,
-        imageUri: code.image?.imageUri,
-      },
-      handler: props.handler === Handler.FROM_IMAGE ? undefined : props.handler,
+      handler: props.handler,
     });
   }
 }
@@ -397,7 +568,27 @@ export class Function extends cdk.Resource {
 
 ---
 
-## コントリビュートのハマりどこ
+<Header>CDK のコードの中</Header>
+
+今回のコードは実物をかなり単純化したものですが、基本的な読み方に変わりはありません。（例外：Custom ResourceやAssetsなど）
+
+ドキュメントの不備や、生えてない機能を見つけたらコントリビュートしてみてはいかがでしょうか？
+
+---
+
+## コントリビュートに向けて
+
+---
+
+<Header>コントリビュートに向けて</Header>
+
+- Unit Testを書く
+- Integ Testを書く
+- READMEを書く
+- PRを作る
+- CIを通す
+
+TODO: それぞれ書く
 
 ---
 

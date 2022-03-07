@@ -7,7 +7,7 @@
   "license": "ISC",
   "scripts": {
     "build": "mdx-deck build ./deck.mdx --basepath=/slide-aws-cdk-conference-japan",
-    "start": "mdx-deck ./deck.mdx --basepath=/slide-aws-cdk-conference-japan",
+    "start": "mdx-deck ./deck.mdx",
     "screenshot": "node screenshot.js"
   },
   "dependencies": {

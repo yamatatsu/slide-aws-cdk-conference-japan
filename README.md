@@ -12,3 +12,11 @@ npm start
 ```
 npm run build
 ```
+
+## Tasks
+
+- [ ] iot, iotevents の例
+- [ ] コード以外のハマりどこ
+- [ ] OGP
+- [ ] redirect
+- [ ] font
