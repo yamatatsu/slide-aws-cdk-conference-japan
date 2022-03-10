@@ -37,7 +37,7 @@ export const Profile = () => (
       <ul style={styles.list}>
         <li style={styles.name}>山本達也（やまたつ）</li>
         <li style={styles.company}>@Classmethod</li>
-
+        <li style={styles.listItemSub}>Contributed aws-iot, aws-iotevents</li>
         <li style={styles.listItemSub}>
           <a href="https://twitter.com/yamatatsu193">Twitter: @yamatatsu193</a>
         </li>

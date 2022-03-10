@@ -32,25 +32,7 @@ export const theme = vsDarkPartial;
 
 ---
 
-<AlignLeft>
-
-<Header>概要</Header>
-
-1. 僕が CDK にコントリビュートしたこと
-1. ゴール
-1. CDK のコードの中
-1. コントリビュートに向けて
-1. おわりに
-
-</AlignLeft>
-
----
-
 ## 僕が CDK にコントリビュートしたこと
-
----
-
-<Header>僕が CDK にコントリビュートしたこと</Header>
 
 ---
 
@@ -58,8 +40,6 @@ export const theme = vsDarkPartial;
 
 - aws-iot
 - aws-iotevents
-
-TODO: 2例書く
 
 ---
 
@@ -322,7 +302,130 @@ new iot.TopicRule(this, 'MyTopicRule' {
 
 ---
 
+
+<CodeSurferLayout>
+
+```ts
+const role = new iam.Role(this, 'MyRole', {});
+
+new iotevents.CfnDetectorModel(this, 'HeartBeat', {
+  roleArn: role.roleArn,
+  detectorModelDefinition: {
+    initialStateName: 'Normal',
+    states: [
+      {
+        stateName: 'Normal',
+        onEnter: {
+          events: [{
+            eventName: 'Create_timer',
+            condition: 'currentInput("AWS_IoTEvents_Blueprints_Heartbeat_Input")',
+            actions: [{
+              setTimer: { seconds: 300, timerName: 'awake' },
+            }],
+          }],
+        },
+        onInput: {
+          transitionEvents: [{
+            eventName: 'Go_offline',
+            condition: 'timeout("awake")',
+            nextState: 'Offline',
+          }],
+          events: [{
+            eventName: 'Reset_timer',
+            condition: 'currentInput("AWS_IoTEvents_Blueprints_Heartbeat_Input")',
+            actions: [{
+              resetTimer: { timerName: 'awake' },
+            }],
+          }],
+        },
+      },
+      {
+        stateName: 'Offline',
+        onEnter: {
+          events: [{
+            eventName: 'Send_notification',
+            actions: [{
+              sns: { targetArn: 'sns-topic-arn' },
+            }],
+          }],
+        },
+        onInput: {
+          transitionEvents: [{
+            eventName: 'To_normal',
+            condition: 'currentInput("AWS_IoTEvents_Blueprints_Heartbeat_Input")',
+            nextState: 'Normal',
+          }],
+        },
+      },
+    ],
+  },
+});
+```
+
+```ts
+const normalState = new iotevents.State({
+  stateName: 'Normal',
+  onEnter: [{
+    eventName: 'Create_timer',
+    condition: iotevents.Expression.currentInput(input),
+    actions: [new SetTimer('awake', { seconds: 300 })],
+  }],
+  onInput: [{
+    eventName: 'Reset_timer',
+    condition: iotevents.Expression.currentInput(input),
+    actions: [new ResetTimer('awake')],
+  }],
+});
+const offlineState = new iotevents.State({
+  stateName: 'Offline',
+  onEnter: [{
+    eventName: 'Send_notification',
+    actions: [new SnsPublishTopicAction(topic)],
+  }],
+});
+
+normalState.transitionTo(offlineState, {
+  when: iotevents.Expression.timeout('awake'),
+})
+offlineState.transitionTo(normalState, {
+  when: iotevents.Expression.currentInput(input),
+})
+
+new iotevents.DetectorModel(this, 'HeartBeat', {
+  initialState: normalState,
+});
+```
+
+</CodeSurferLayout>
+
+---
+
+`aws-iotevents` の方はまだ工事中で使えません
+
+<img src={require("file-loader!./parts/assets/ojigi_animal_inu.png")} height="120" />
+
+---
+
+<AlignLeft>
+
+<Header>概要</Header>
+
+1. ゴール
+1. CDK のコードの中
+1. コントリビュートに向けて
+1. おわりに
+
+</AlignLeft>
+
+---
+
 ## ゴール
+
+---
+
+<Header>ゴール</Header>
+
+### 😩 → 🤩
 
 ---
 
@@ -785,7 +888,7 @@ export class Function extends cdk.Resource {
 }
 ```
 
-```ts subtitle="あとはテストとREADMEを追記すればPRを出せます！"
+```ts 1:30 subtitle="あとはテストとREADMEを追記すればPRを出せます！"
 export interface FunctionProps {
   /**
    * The source code of your Lambda function. You can point to a file in an
