@@ -32,10 +32,6 @@ export const theme = vsDarkPartial;
 
 ---
 
-## 僕が CDK にコントリビュートしたこと
-
----
-
 <Header>僕が CDK にコントリビュートしたこと</Header>
 
 - aws-iot
@@ -376,6 +372,7 @@ const normalState = new iotevents.State({
     actions: [new ResetTimer('awake')],
   }],
 });
+
 const offlineState = new iotevents.State({
   stateName: 'Offline',
   onEnter: [{
@@ -467,6 +464,10 @@ new iotevents.DetectorModel(this, 'HeartBeat', {
 
 ---
 
+## ではさっそく
+
+---
+
 ## CDK のコードの中
 
 ---
@@ -491,13 +492,6 @@ export class Function extends cdk.Resource {
 ```
 
 ```ts subtitle="クラスにはconstructorが定義されています"
-export class Function extends cdk.Resource {
-  constructor(scope: Construct, id: string, props: FunctionProps) {
-  }
-}
-```
-
-```ts 2[15:65] subtitle="Constructを継承するクラスはconstructorにて必ず3つの引数をとります"
 export class Function extends cdk.Resource {
   constructor(scope: Construct, id: string, props: FunctionProps) {
   }
@@ -928,14 +922,6 @@ export class Function extends cdk.Resource {
 
 ---
 
-<Header>CDK のコードの中</Header>
-
-今回のコードは実物をかなり単純化したものですが、基本的な読み方に変わりはありません。（例外：Custom ResourceやAssetsなど）
-
-ドキュメントの不備や、生えてない機能を見つけたらコントリビュートしてみてはいかがでしょうか？
-
----
-
 ## コントリビュートに向けて
 
 ---
@@ -948,11 +934,23 @@ export class Function extends cdk.Resource {
 - PRを作る
 - CIを通す
 
-TODO: それぞれ書く
-
 ---
 
 ## おわりに
+
+---
+
+<Header>おわりに</Header>
+
+<div style={{margin: '0 100px'}}>
+
+- 今回のコードは実物をかなり単純化したものですが、基本的な読み方に変わりはありません。
+
+  （例外 CLI、Custom Resource、Assetsなど）
+
+- ドキュメントの不備や、生えてない機能を見つけたらコントリビュートしてみてはいかがでしょうか？
+
+</div>
 
 ---
 
