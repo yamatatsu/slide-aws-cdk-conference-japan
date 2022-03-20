@@ -11,7 +11,8 @@
     "screenshot": "node screenshot.js"
   },
   "dependencies": {
-    "code-surfer": "2.0.0-alpha.10"
+    "code-surfer": "2.0.0-alpha.10",
+    "mermaid": "^8.11.5"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",

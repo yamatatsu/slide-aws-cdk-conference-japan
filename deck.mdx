@@ -1,6 +1,6 @@
 import { Notes, Head, Steps } from "mdx-deck";
-import { Meta, Profile, AlignLeft, Header } from "./parts";
 import { CodeSurferLayout, vsDarkPartial } from "code-surfer";
+import { Meta, Profile, AlignLeft, Header, Mermaid } from "./parts";
 import "main.css";
 
 export const theme = vsDarkPartial;
@@ -407,7 +407,6 @@ new iotevents.DetectorModel(this, 'HeartBeat', {
 
 <Header>概要</Header>
 
-1. ゴール
 1. CDK のコードの中
 1. コントリビュートに向けて
 1. おわりに
@@ -416,7 +415,11 @@ new iotevents.DetectorModel(this, 'HeartBeat', {
 
 ---
 
-## ゴール
+## そのまえに
+
+---
+
+## ゴールの共有
 
 ---
 
@@ -461,6 +464,12 @@ new iotevents.DetectorModel(this, 'HeartBeat', {
 <Header>ゴール</Header>
 
 # 😩 → 🤩
+
+---
+
+<img src={require("file-loader!./parts/assets/race-chart.png")} width="1000" />
+
+https://yamatatsu.github.io/aws-cdk-contribution-chart/
 
 ---
 
@@ -916,6 +925,40 @@ export class Function extends cdk.Resource {
     });
   }
 }
+```
+
+</CodeSurferLayout>
+
+---
+
+## もうちょいよくあるコード紹介
+
+---
+
+## fromXXX
+
+---
+
+
+<CodeSurferLayout>
+
+
+```ts 
+```
+
+</CodeSurferLayout>
+
+---
+
+## grantXXX
+
+---
+
+
+<CodeSurferLayout>
+
+
+```ts 
 ```
 
 </CodeSurferLayout>
