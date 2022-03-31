@@ -32,7 +32,7 @@ export const theme = vsDarkPartial;
 
 ---
 
-<Header>僕が CDK にコントリビュートしたこと</Header>
+### IoT周りのCDKを実装しています
 
 - aws-iot
 - aws-iotevents
@@ -298,111 +298,6 @@ new iot.TopicRule(this, 'MyTopicRule' {
 
 ---
 
-
-<CodeSurferLayout>
-
-```ts
-const role = new iam.Role(this, 'MyRole', {});
-
-new iotevents.CfnDetectorModel(this, 'HeartBeat', {
-  roleArn: role.roleArn,
-  detectorModelDefinition: {
-    initialStateName: 'Normal',
-    states: [
-      {
-        stateName: 'Normal',
-        onEnter: {
-          events: [{
-            eventName: 'Create_timer',
-            condition: 'currentInput("AWS_IoTEvents_Blueprints_Heartbeat_Input")',
-            actions: [{
-              setTimer: { seconds: 300, timerName: 'awake' },
-            }],
-          }],
-        },
-        onInput: {
-          transitionEvents: [{
-            eventName: 'Go_offline',
-            condition: 'timeout("awake")',
-            nextState: 'Offline',
-          }],
-          events: [{
-            eventName: 'Reset_timer',
-            condition: 'currentInput("AWS_IoTEvents_Blueprints_Heartbeat_Input")',
-            actions: [{
-              resetTimer: { timerName: 'awake' },
-            }],
-          }],
-        },
-      },
-      {
-        stateName: 'Offline',
-        onEnter: {
-          events: [{
-            eventName: 'Send_notification',
-            actions: [{
-              sns: { targetArn: 'sns-topic-arn' },
-            }],
-          }],
-        },
-        onInput: {
-          transitionEvents: [{
-            eventName: 'To_normal',
-            condition: 'currentInput("AWS_IoTEvents_Blueprints_Heartbeat_Input")',
-            nextState: 'Normal',
-          }],
-        },
-      },
-    ],
-  },
-});
-```
-
-```ts
-const normalState = new iotevents.State({
-  stateName: 'Normal',
-  onEnter: [{
-    eventName: 'Create_timer',
-    condition: iotevents.Expression.currentInput(input),
-    actions: [new SetTimer('awake', { seconds: 300 })],
-  }],
-  onInput: [{
-    eventName: 'Reset_timer',
-    condition: iotevents.Expression.currentInput(input),
-    actions: [new ResetTimer('awake')],
-  }],
-});
-
-const offlineState = new iotevents.State({
-  stateName: 'Offline',
-  onEnter: [{
-    eventName: 'Send_notification',
-    actions: [new SnsPublishTopicAction(topic)],
-  }],
-});
-
-normalState.transitionTo(offlineState, {
-  when: iotevents.Expression.timeout('awake'),
-})
-offlineState.transitionTo(normalState, {
-  when: iotevents.Expression.currentInput(input),
-})
-
-new iotevents.DetectorModel(this, 'HeartBeat', {
-  initialState: normalState,
-});
-```
-
-</CodeSurferLayout>
-
----
-
-`aws-iotevents` の方はまだ工事中で使えません
-
-<img src={require("file-loader!./parts/assets/ojigi_animal_inu.png")} height="120" />
-
----
-
 <AlignLeft>
 
 <Header>概要</Header>
@@ -478,6 +373,30 @@ https://yamatatsu.github.io/aws-cdk-contribution-chart/
 ---
 
 ## CDK のコードの中
+
+---
+
+のまえに
+
+---
+
+## CDK の予備知識
+
+---
+
+<Header>CDK の予備知識</Header>
+
+- **[jsii](https://github.com/aws/jsii)**: CDK はTSのコードから他言語とDocとを  
+  自動生成している
+- **[L1, L2, L3](https://docs.aws.amazon.com/cdk/v2/guide/constructs.html#constructs_lib)**:
+  - **L1**: AWS CloudFormation の定義から自動生成
+  - **L2**: L1 をラップしてユーザーに優しくしたクラス
+  - **L3**: L2 を組み合わせて特定ユースケースに特化  
+    (ecs-patterns など)
+
+---
+
+## では
 
 ---
 
@@ -931,40 +850,6 @@ export class Function extends cdk.Resource {
 
 ---
 
-## もうちょいよくあるコード紹介
-
----
-
-## fromXXX
-
----
-
-
-<CodeSurferLayout>
-
-
-```ts 
-```
-
-</CodeSurferLayout>
-
----
-
-## grantXXX
-
----
-
-
-<CodeSurferLayout>
-
-
-```ts 
-```
-
-</CodeSurferLayout>
-
----
-
 ## コントリビュートに向けて
 
 ---
@@ -979,6 +864,62 @@ export class Function extends cdk.Resource {
 
 ---
 
+<Header>コントリビュートに向けて</Header>
+
+- ~~Unit Testを書く~~
+- ~~Integ Testを書く~~
+- ~~READMEを書く~~
+- ~~PRを作る~~
+- ~~CIを通す~~
+
+---
+
+こんな面白くない話はブログで書くわ
+
+---
+
+<img src={require("file-loader!./parts/assets/pulumi-vs-cdk.png")} width="800" />
+
+https://www.pulumi.com/docs/intro/vs/cloud-template-transpilers/
+
+---
+
+<img src={require("file-loader!./parts/assets/pulumi-vs-cdk-answer.png")} width="1000" />
+
+https://github.com/pulumi/pulumi-hugo/issues/1275
+
+---
+
+でもなぁ。。。
+
+---
+
+CFnはStackの中のリソースたちを効率的にデプロイしてくれるけど、CDKはそのStackを直列でしかデプロイしてくれないんだよなぁ。。。
+
+CDが時間かかるんだよなぁ。。。
+
+---
+
+<img src={require("file-loader!./parts/assets/concurrent.png")} width="1000" />
+
+https://github.com/aws/aws-cdk/pull/19378
+
+---
+
+でもなぁ。。。
+
+---
+
+terraformは既存リソースの取り込みがめっちゃ強いんだよなぁ。。。
+
+---
+
+<img src={require("file-loader!./parts/assets/import.png")} width="1000" />
+
+https://github.com/aws/aws-cdk/pull/17666
+
+---
+
 ## おわりに
 
 ---
@@ -989,7 +930,7 @@ export class Function extends cdk.Resource {
 
 - 今回のコードは実物をかなり単純化したものですが、基本的な読み方に変わりはありません。
 
-  （例外 CLI、Custom Resource、Assetsなど）
+  （例外: CLI、Custom Resource、Assetsなど）
 
 - ドキュメントの不備や、生えてない機能を見つけたらコントリビュートしてみてはいかがでしょうか？
 

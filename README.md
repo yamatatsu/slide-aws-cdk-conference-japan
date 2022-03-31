@@ -15,8 +15,9 @@ npm run build
 
 ## Tasks
 
-- [ ] iot, iotevents の例
-- [ ] コード以外のハマりどこ
+- [x] iot, iotevents の例
+- [x] コード以外のハマりどこ
+- [ ] JSII
+- [ ] L1, L2, L3
 - [ ] OGP
-- [ ] redirect
 - [ ] font
