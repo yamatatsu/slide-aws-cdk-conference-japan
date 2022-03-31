@@ -13,6 +13,7 @@ export const Meta = ({
     <meta property="og:locale" content={locale} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:site_name" content={title} />
     <meta property="og:type" content="article" />
     <meta property="og:url" content={host} />
     <meta property="og:image" content={`${host}/ogp.png`} />
@@ -22,6 +23,7 @@ export const Meta = ({
     <meta name="twitter:title" content={title} />
     <meta name="twitter:image:src" content={`${host}/ogp.png`} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:site" content="@yamatatsu193">
     <meta name="twitter:url" content={host} />
     <title>{title}</title>
     <link
