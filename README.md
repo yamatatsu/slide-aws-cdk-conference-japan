@@ -17,7 +17,7 @@ npm run build
 
 - [x] iot, iotevents の例
 - [x] コード以外のハマりどこ
-- [ ] JSII
-- [ ] L1, L2, L3
-- [ ] OGP
+- [x] JSII
+- [x] L1, L2, L3
+- [x] OGP
 - [ ] font
