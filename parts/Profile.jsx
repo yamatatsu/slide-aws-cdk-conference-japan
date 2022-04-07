@@ -41,7 +41,7 @@ export const Profile = () => (
           <a href="https://twitter.com/yamatatsu193">Twitter: @yamatatsu193</a>
         </li>
         <li style={styles.listItemSub}>
-          <a href="https://github.com/yamatatsu">Github: @yamatatsu</a>
+          <a href="https://github.com/yamatatsu">GitHub: @yamatatsu</a>
         </li>
       </ul>
     </div>
