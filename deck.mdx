@@ -36,7 +36,8 @@ export const theme = vsDarkPartial;
 ### IoT周りのCDKを実装しています
 
 - aws-iot
-- aws-iotevents
+- aws-iotevents (Now)
+- aws-wafv2 (予定)
 
 ---
 
@@ -387,7 +388,7 @@ https://yamatatsu.github.io/aws-cdk-contribution-chart/
 
 <Header>CDK の予備知識</Header>
 
-- **[jsii](https://github.com/aws/jsii)**: CDK はTSのコードから他言語とDocとを  
+- **[jsii](https://github.com/aws/jsii)**: CDK はTypeScriptのコードから他言語とDocとを  
   自動生成している
 - **[L1, L2, L3](https://docs.aws.amazon.com/cdk/v2/guide/constructs.html#constructs_lib)**:
   - **L1**: AWS CloudFormation の定義から自動生成
@@ -471,7 +472,7 @@ export class Function extends cdk.Resource {
 }
 ```
 
-```ts 2:6 subtitle="ちなみにjsdocがないとCIが落ちるので最近手が入ったコードは必ずjsdocがあります😅"
+```ts 2:6 subtitle="ちなみにjsdocがないとCIが落ちるのでほぼ必ずjsdocがあります😅"
 export interface FunctionProps {
   /**
    * The source code of your Lambda function. You can point to a file in an
