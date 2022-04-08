@@ -300,6 +300,65 @@ new iot.TopicRule(this, 'MyTopicRule' {
 
 ---
 
+<CodeSurferLayout>
+
+```ts
+new iotevents.CfnDetectorModel(this, 'MyDetectorModel', {
+  detectorModelDefinition: {
+    initialStateName: 'warm',
+    states: [
+      {
+        stateName: 'warm'
+        onInput: {
+          transitionEvents: [
+            {
+              eventName: 'warm_to_cold',
+              condition: '$input.MyInput.payload.temperature < 15',
+              nextState: 'cold'
+            }
+          ]
+        },
+      },
+      {
+        stateName: 'cold'
+        onInput: {
+          transitionEvents: [
+            {
+              eventName: 'cold_to_warm',
+              condition: '$input.MyInput.payload.temperature >= 15',
+              nextState: 'warm'
+            }
+          ]
+        },
+      }
+    ]
+  },
+});
+```
+
+```ts
+const warm = new iotevents.State({ stateName: 'warm' });
+const cold = new iotevents.State({ stateName: 'cold' });
+
+const temperature = iotevents.Expression.inputAttribute(input, 'payload.temperature');
+const threshold = iotevents.Expression.fromString('15');
+
+warm.transitionTo(cold, {
+  when: iotevents.Expression.lt(temperature, threshold),
+});
+cold.transitionTo(warm, {
+  when: iotevents.Expression.gte(temperature, threshold),
+});
+
+new iotevents.DetectorModel(this, 'MyDetectorModel', {
+  initialState: warm,
+});
+```
+
+</CodeSurferLayout>
+
+---
+
 <AlignLeft>
 
 <Header>概要</Header>
